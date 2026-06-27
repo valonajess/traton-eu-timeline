@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU Emissions Regulations Timeline</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #1a1a18; padding: 16px 20px 20px; font-size: 13px; line-height: 1.5; }
+h1 { font-size: 15px; font-weight: 600; margin-bottom: 3px; color: #111; }
+.sub { font-size: 11px; color: #888; margin-bottom: 12px; }
+.filters { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+.fl { font-size: 11px; color: #999; }
+.fb { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid #ccc; background: #fff; color: #555; cursor: pointer; font-family: inherit; }
+.fb.on { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+.leg { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.li { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #666; }
+.ls { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; display: inline-block; }
+.tl-scroll { width: 100%; overflow-x: auto; }
+.tl-table { width: 100%; min-width: 560px; border-collapse: collapse; }
+.lbl-cell { width: 92px; font-size: 10px; color: #888; text-align: right; padding-right: 8px; vertical-align: middle; white-space: nowrap; }
+.track-cell { padding: 3px 0; vertical-align: middle; }
+.track { position: relative; height: 30px; background: #f9f9f9; border-left: 1px solid #e5e7eb; }
+.bar { position: absolute; top: 4px; height: 22px; border-radius: 3px; cursor: pointer; overflow: hidden; display: flex; align-items: center; padding: 0 5px; }
+.bar:hover { filter: brightness(0.85); }
+.bar span { font-size: 9.5px; font-weight: 600; color: #fff; white-space: nowrap; pointer-events: none; }
+.gridline { position: absolute; top: 0; bottom: 0; width: 1px; background: #efefef; pointer-events: none; }
+.milestone-line { position: absolute; top: 0; bottom: 0; width: 1px; background: #f59e0b; opacity: 0.45; pointer-events: none; }
+.yr-cell { padding: 0; }
+.yr-track { position: relative; height: 18px; }
+.yr-lbl { position: absolute; font-size: 9px; color: #bbb; transform: translateX(-50%); top: 3px; white-space: nowrap; }
+.ms-track { position: relative; height: 18px; }
+.ms-lbl { position: absolute; font-size: 8.5px; color: #b45309; font-weight: 600; transform: translateX(-50%); top: 3px; white-space: nowrap; }
+.ms-tick { position: absolute; top: 0; bottom: 0; width: 1px; background: #f59e0b; opacity: 0.55; }
+.detail { display: none; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 14px; margin-top: 14px; }
+.detail.show { display: block; }
+.dh { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.dtitle { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.pill { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+.pg { background: #d1fae5; color: #065f46; }
+.pa { background: #fef3c7; color: #92400e; }
+.dl { font-size: 10px; color: #999; margin-bottom: 1px; margin-top: 7px; }
+.dv { color: #1a1a18; line-height: 1.5; font-size: 12px; }
+.dv.b { font-weight: 600; }
+.dg { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; }
+.cx { font-size: 20px; color: #aaa; cursor: pointer; background: none; border: none; line-height: 1; padding: 0; font-family: inherit; }
+.src { margin-top: 12px; font-size: 10px; color: #aaa; border-top: 1px solid #f0f0f0; padding-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>EU emissions regulations — commercial trucks &amp; buses</h1>
+<p class="sub">Reg. EU 2024/1257 (Euro 7) &nbsp;·&nbsp; Reg. EU 2024/1610 (HDV CO₂) &nbsp;·&nbsp; Reg. EU 2023/1804 (AFIR) &nbsp;·&nbsp; Click any bar for detail</p>
+
+<div class="filters">
+  <span class="fl">Filter:&nbsp;</span>
+  <button class="fb on" data-f="all">All</button>
+  <button class="fb" data-f="nox">NOx / emissions</button>
+  <button class="fb" data-f="co2">CO₂ / decarbonisation</button>
+  <button class="fb" data-f="infra">Infrastructure</button>
+</div>
+
+<div class="leg">
+  <span class="li"><span class="ls" style="background:#378ADD"></span>NOx / emissions</span>
+  <span class="li"><span class="ls" style="background:#BA7517"></span>CO₂ / decarbonisation</span>
+  <span class="li"><span class="ls" style="background:#1D9E75"></span>Infrastructure (AFIR)</span>
+  <span class="li"><span class="ls" style="background:#aaa;opacity:.5"></span>Upcoming / pending</span>
+</div>
+
+<div class="tl-scroll">
+  <table class="tl-table"><tbody id="tl-body"></tbody></table>
+</div>
+
+<div class="detail" id="det">
+  <div class="dh">
+    <div>
+      <div class="dtitle" id="d-ttl"></div>
+      <span class="pill" id="d-st"></span>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:10px;">
+      <div style="text-align:right">
+        <div class="dl" style="margin-top:0">Period</div>
+        <div class="dv b" id="d-yr"></div>
+      </div>
+      <button class="cx" id="d-close">×</button>
+    </div>
+  </div>
+  <div class="dl">Key limit / target</div><div class="dv b" id="d-lim"></div>
+  <div class="dl">What it requires</div><div class="dv" id="d-desc"></div>
+  <div class="dg">
+    <div><div class="dl">Technology implication</div><div class="dv" id="d-tech"></div></div>
+    <div><div class="dl">TRATON relevance</div><div class="dv" id="d-tr"></div></div>
+  </div>
+</div>
+
+<p class="src">Sources: Reg. EU 2024/1257 (Euro 7, pub. 8 May 2024) · Reg. EU 2024/1610 (HDV CO₂) · Reg. EU 2023/1804 (AFIR) · European Parliament press release 18 Dec 2023 · ICCT Euro 7 analysis Mar 2024 · Scania/TRATON newsroom. Implementing acts for Euro 7 HDV due Nov 2026 — some limit values pending confirmation.</p>
+
+<script>
+var YS = 2020, YE = 2042, SPAN = YE - YS;
+function L(yr) { return ((yr - YS) / SPAN * 100).toFixed(3) + '%'; }
+function W(s, e) { return ((Math.min(e, YE) - Math.max(s, YS)) / SPAN * 100).toFixed(3) + '%'; }
+
+var REGS = [
+  { id:'vi-d',   cat:'nox',  lane:0, label:'Euro VI d',       color:'#378ADD', op:1,    start:2020, end:2026, status:'In force',
+    limit:'0.40 / 0.46 g/kWh NOx (WHSC / WHTC)',
+    desc:'Tightened in-service conformity (ISC) testing with PEMS. 90th percentile of valid windows must stay below 0.69 g/kWh on-road. Cold start excluded (coolant >70°C). Represents 80% NOx reduction vs Euro V; real-world fleet average 0.27 g/kWh.',
+    tech:'SCR + DPF after-treatment. PEMS data logging required for ISC compliance.',
+    tr:'Applies to all Scania and MAN diesel and CNG engines in production through model year 2025.' },
+  { id:'vi-e',   cat:'nox',  lane:0, label:'Euro VI e',       color:'#185FA5', op:1,    start:2025, end:2028, status:'In force',
+    limit:'0.46 g/kWh NOx — cold start now in scope',
+    desc:'Lowers the cold-start coolant threshold, bringing cold-start and low-load urban NOx into ISC scope for the first time. Harder to achieve with existing SCR thermal calibration.',
+    tech:'Improved SCR catalyst warm-up strategies; electrically heated catalyst (EHC) development underway.',
+    tr:'MAN TGX and Scania long-haul engines must demonstrate clean cold-start performance during ISC checks.' },
+  { id:'euro7',  cat:'nox',  lane:0, label:'Euro 7',          color:'#0C447C', op:0.6,  start:2028, end:2042, status:'Upcoming',
+    limit:'200 mg/kWh NOx lab / 260 mg/kWh RDE',
+    desc:'Harmonises WHSC/WHTC NOx to 200 mg/kWh — 57% tighter than Euro VI. RDE limits now embedded in regulation text. Brake particles, N₂O, and sub-10nm PN regulated for first time. Implementing acts for HDVs due Nov 2026.',
+    tech:'Next-gen SCR, electrically heated catalysts, PN10-capable DPF, N₂O after-treatment, continuous on-board monitoring (OBM).',
+    tr:'Significant engine and after-treatment re-engineering required at Scania and MAN, concurrent with BEV ramp-up.' },
+  { id:'co2-15', cat:'co2',  lane:1, label:'CO₂ −15%',       color:'#EF9F27', op:1,    start:2025, end:2030, status:'In force',
+    limit:'−15% vs 2019 baseline',
+    desc:'First binding CO₂ target under EU HDV CO₂ Regulation. Penalty: €4,250/vehicle/g CO₂ excess. April 2026 amendment: over-performance above −15% can be banked as credits toward the 2030 target.',
+    tech:'Early BEV introductions; improved diesel efficiency; active fleet CO₂ mix management.',
+    tr:'Scania and MAN must manage fleet CO₂ averages. Credit banking via early BEV sales is now an explicit compliance strategy.' },
+  { id:'co2-45', cat:'co2',  lane:1, label:'CO₂ −45%',       color:'#BA7517', op:0.75, start:2030, end:2035, status:'Upcoming',
+    limit:'−45% vs 2019 baseline',
+    desc:'Diesel efficiency cannot close 45%. Requires mass BEV ramp-up. ~400,000 BEV trucks needed on EU roads by 2030. EU-27 needs 22–28 GW of charging capacity. The 2030 ceiling is unchanged by the April 2026 amendment.',
+    tech:'Large-scale BEV truck production; megawatt charging (MCS) deployment; depot and corridor charging at scale.',
+    tr:'Core forcing function for Scania and MAN electrification. Milence JV (TRATON/Daimler/Volvo) directly linked.' },
+  { id:'co2-65', cat:'co2',  lane:1, label:'CO₂ −65%',       color:'#854F0B', op:0.55, start:2035, end:2040, status:'Upcoming',
+    limit:'−65% vs 2019 baseline',
+    desc:'Near-zero-emission fleet required for new trucks from 2035. Only BEV and hydrogen fuel-cell trucks can achieve this in fleet-average terms.',
+    tech:'Mature BEV and FCEV platforms at volume; full TEN-T charging network coverage.',
+    tr:'Long-range planning horizon for all TRATON brands.' },
+  { id:'co2-90', cat:'co2',  lane:1, label:'CO₂ −90%',       color:'#633806', op:0.45, start:2040, end:2042, status:'Upcoming',
+    limit:'−90% vs 2019 baseline',
+    desc:'Effectively requires all new trucks to be zero-emission. Defines the end-state for the EU HDV decarbonisation pathway.',
+    tech:'Second/third generation BEV/FCEV; full charging and hydrogen network maturity.',
+    tr:'No new diesel truck sales in Europe from 2040 — TRATON portfolio end-state.' },
+  { id:'bus-zev',cat:'co2',  lane:2, label:'ZEV buses',       color:'#EF9F27', op:0.7,  start:2030, end:2042, status:'Upcoming',
+    limit:'100% zero-emission new urban buses from 2030',
+    desc:'All new urban buses in EU must be zero-emission from 2030. No phase-in, no weight-class exceptions. Applies to M2 and M3 category urban buses.',
+    tech:'Full BEV bus portfolio. Depot charging and opportunity charging (pantograph) for all-day routes.',
+    tr:'MAN Lion\'s City E and Scania electric bus are primary products. Depot charging critical for adoption.' },
+  { id:'afir-25',cat:'infra',lane:3, label:'AFIR 2025',       color:'#1D9E75', op:1,    start:2025, end:2027, status:'In force',
+    limit:'Core TEN-T HDV charge points — interim milestone',
+    desc:'Member states must deploy minimum HDV charging along core TEN-T. As of late 2025, only ~2,000 of 20,000 needed points are deployed — a severe gap undermining fleet operator BEV confidence.',
+    tech:'High-power AC/DC charging at motorway service areas; grid upgrades; permitting acceleration.',
+    tr:'Slow deployment constrains fleet operator BEV orders. Milence JV is TRATON\'s primary response.' },
+  { id:'afir-30',cat:'infra',lane:3, label:'AFIR 2030',       color:'#0F6E56', op:0.7,  start:2027, end:2035, status:'Upcoming',
+    limit:'20,000+ TEN-T HDV charge points by 2030',
+    desc:'Full AFIR mandate: 20,000+ HDV-capable charge points including MCS by 2030. AFIR review due end-2026 may tighten targets. Grid and permitting bottlenecks are primary risks.',
+    tech:'MCS at scale; smart charging and grid balancing; V2G (Scania demonstrated MCS V2G May 2026).',
+    tr:'TRATON Charging Solutions and Milence are primary delivery vehicles. Network quality is a competitive differentiator.' },
+];
+
+var MILESTONES   = [2025, 2028, 2029, 2030, 2035, 2040];
+var YR_TICKS     = [2020, 2022, 2024, 2026, 2028, 2030, 2032, 2034, 2036, 2038, 2040, 2042];
+var LANE_LABELS  = ['NOx / emissions', 'CO₂ targets', 'Urban buses', 'AFIR / charging'];
+
+var activeFilter = 'all';
+var activeId     = null;
+
+function div(cls, styles) {
+  var d = document.createElement('div');
+  if (cls) d.className = cls;
+  if (styles) d.style.cssText = styles;
+  return d;
+}
+function td(cls) { var e = document.createElement('td'); if (cls) e.className = cls; return e; }
+function tr()    { return document.createElement('tr'); }
+
+function makeTrack(laneIdx) {
+  var wrap = div('track', 'position:relative;height:30px;background:#f9f9f9;border-left:1px solid #e5e7eb;');
+  YR_TICKS.forEach(function(yr) {
+    var g = div('gridline', 'position:absolute;top:0;bottom:0;width:1px;background:#efefef;left:' + L(yr));
+    wrap.appendChild(g);
+  });
+  MILESTONES.forEach(function(yr) {
+    var m = div('milestone-line', 'position:absolute;top:0;bottom:0;width:1px;background:#f59e0b;opacity:0.4;left:' + L(yr));
+    wrap.appendChild(m);
+  });
+  REGS.forEach(function(r) {
+    if (r.lane !== laneIdx) return;
+    if (activeFilter !== 'all' && activeFilter !== r.cat) return;
+    var bar = div('bar', 'position:absolute;top:4px;height:22px;border-radius:3px;cursor:pointer;overflow:hidden;display:flex;align-items:center;padding:0 5px;left:' + L(r.start) + ';width:' + W(r.start, r.end) + ';background:' + r.color + ';opacity:' + r.op + ';' + (activeId === r.id ? 'outline:2px solid rgba(0,0,0,0.22);' : ''));
+    var sp = document.createElement('span');
+    sp.style.cssText = 'font-size:9.5px;font-weight:600;color:#fff;white-space:nowrap;pointer-events:none;';
+    sp.textContent = r.label;
+    bar.appendChild(sp);
+    (function(rid) { bar.addEventListener('click', function() { showDetail(rid); }); })(r.id);
+    wrap.appendChild(bar);
+  });
+  return wrap;
+}
+
+function draw() {
+  var tbody = document.getElementById('tl-body');
+  tbody.innerHTML = '';
+
+  // Milestone label row
+  var r0 = tr();
+  var t0a = td('lbl-cell'); r0.appendChild(t0a);
+  var t0b = td('yr-cell');
+  var ms = div(null, 'position:relative;height:18px;');
+  MILESTONES.forEach(function(yr) {
+    var tick = div(null, 'position:absolute;top:0;bottom:0;width:1px;background:#f59e0b;opacity:0.5;left:' + L(yr));
+    ms.appendChild(tick);
+    var lbl = div(null, 'position:absolute;top:2px;font-size:8.5px;color:#b45309;font-weight:600;transform:translateX(-50%);white-space:nowrap;left:' + L(yr));
+    lbl.textContent = yr;
+    ms.appendChild(lbl);
+  });
+  t0b.appendChild(ms); r0.appendChild(t0b);
+  tbody.appendChild(r0);
+
+  // Lane rows
+  LANE_LABELS.forEach(function(label, i) {
+    var row = tr();
+    var tdL = td('lbl-cell'); tdL.textContent = label; row.appendChild(tdL);
+    var tdT = td('track-cell'); tdT.style.padding = '3px 0';
+    tdT.appendChild(makeTrack(i));
+    row.appendChild(tdT);
+    tbody.appendChild(row);
+  });
+
+  // Year tick row
+  var rY = tr();
+  var tyA = td('lbl-cell'); rY.appendChild(tyA);
+  var tyB = td('yr-cell');
+  var yt = div(null, 'position:relative;height:18px;');
+  YR_TICKS.forEach(function(yr) {
+    var lbl = div(null, 'position:absolute;top:3px;font-size:9px;color:#bbb;transform:translateX(-50%);white-space:nowrap;left:' + L(yr));
+    lbl.textContent = yr;
+    yt.appendChild(lbl);
+  });
+  tyB.appendChild(yt); rY.appendChild(tyB);
+  tbody.appendChild(rY);
+}
+
+function showDetail(id) {
+  var r = null;
+  for (var i = 0; i < REGS.length; i++) { if (REGS[i].id === id) { r = REGS[i]; break; } }
+  if (!r) return;
+  activeId = (activeId === id) ? null : id;
+  draw();
+  var panel = document.getElementById('det');
+  if (!activeId) { panel.classList.remove('show'); return; }
+  document.getElementById('d-ttl').textContent  = r.label;
+  document.getElementById('d-yr').textContent   = r.start + (r.end < 2042 ? '–' + r.end : '+');
+  document.getElementById('d-lim').textContent  = r.limit;
+  document.getElementById('d-desc').textContent = r.desc;
+  document.getElementById('d-tech').textContent = r.tech;
+  document.getElementById('d-tr').textContent   = r.tr;
+  var st = document.getElementById('d-st');
+  st.textContent = r.status;
+  st.className = 'pill ' + (r.status === 'In force' ? 'pg' : 'pa');
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+document.getElementById('d-close').addEventListener('click', function() {
+  activeId = null; draw();
+  document.getElementById('det').classList.remove('show');
+});
+
+document.querySelectorAll('.fb').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    activeFilter = btn.dataset.f; activeId = null;
+    document.getElementById('det').classList.remove('show');
+    document.querySelectorAll('.fb').forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+    draw();
+  });
+});
+
+draw();
+</script>
+</body>
+</html>
